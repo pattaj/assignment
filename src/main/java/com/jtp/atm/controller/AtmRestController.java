@@ -83,7 +83,7 @@ public class AtmRestController {
              			throw new InvalidAccountAndPinException("Invalid pin number");
              		}
              		
-             			return atmController.calculateBank(amount,account);
+             			return atmController.calcBankAmount(amount,account);
             		 
             	 }
             	 
@@ -106,8 +106,8 @@ public class AtmRestController {
      * @throws InvalidAccountAndPinException
      * @throws AccountNotExistException 
      */
-    @GetMapping("/checkBalance/{account}/{pin}")
-    public ResponseEntity<ResponseWrapper> checkBalance(
+    @GetMapping("/checkAccountBalance/{account}/{pin}")
+    public ResponseEntity<ResponseWrapper> checkAccountBalance(
     		@PathVariable("account") int acct,
     		@PathVariable("pin") int pin) throws InvalidAccountAndPinException, AccountNotExistException {
     	

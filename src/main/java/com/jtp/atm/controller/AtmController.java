@@ -37,24 +37,24 @@ public class AtmController {
      * @param account
      * @return
      */
-    public ResponseEntity<ResponseWrapper> calculateBank(double amount,Account account){
+    public ResponseEntity<ResponseWrapper> calcBankAmount(double amount,Account account){
     	
-    	logger.info("inside calculateBank");
+    	logger.info("inside calcBankAmount");
     	
         String responseCode;
         String responseDesc;
         String responseStatus;
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try {
-            int[] bankAmounts = databaseManager.getBankAmount();
+            int[] bankAmounts = databaseManager.getBankNoteAmount();
             int[] bankValues = databaseManager.getBankValues();
 
-            BankValidator.validateAmount(amount, account.getOpeningBalance(), account.getOverdraft());
-            BankValidator.validateRemainingBalance(amount, bankAmounts, bankValues);
+            BankValidator.validateInputAmount(amount, account.getOpeningBalance(), account.getOverdraft());
+            BankValidator.verifyBankBalance(amount, bankAmounts, bankValues);
 
             List<int[]> bankList = findBanks(amount, new int[bankAmounts.length], bankAmounts, bankValues, 0);
-            int[] selectedBankList = BankValidator.validateRemainingNote(bankAmounts, bankList);
-            int[] updatedBankList = subtractBankAmt(bankAmounts, selectedBankList);
+            int[] selectedBankList = BankValidator.verifyRemainingBankNotes(bankAmounts, bankList);
+            int[] updatedBankList = updatedBankBalance(bankAmounts, selectedBankList);
             databaseManager.updateBalanceAmt(updatedBankList, bankValues);
             
           
@@ -90,46 +90,7 @@ public class AtmController {
         return response;
     }
     
-    
-    
-    public ResponseEntity<ResponseWrapper> checkAccountBalance() {
-    	
-    	
-    	ResponseWrapper responseWrapper = new ResponseWrapper();
-
-       
-        responseWrapper.setResponseCode(Constant.SUCCESS_CODE);
-        responseWrapper.setResponseDesc(Constant.SUCCESS);
-        responseWrapper.setResponseStatus(Constant.SUCCESS);
-       
-
-        ResponseEntity<ResponseWrapper> response = new ResponseEntity<>(responseWrapper, HttpStatus.OK);
-        logger.info("Response {}", response);
-        return response;
-    	
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public ResponseEntity<ResponseWrapper> checkBalance() {
-        int[] bankAmounts = databaseManager.getBankAmount();
-        int[] bankValues = databaseManager.getBankValues();
-
-        ResponseWrapper responseWrapper = new ResponseWrapper();
-
-        responseWrapper.setResponseBody(bankAmounts, bankValues);
-        responseWrapper.setResponseCode(Constant.SUCCESS_CODE);
-        responseWrapper.setResponseDesc(Constant.SUCCESS);
-        responseWrapper.setResponseStatus(Constant.SUCCESS);
-       
-
-        ResponseEntity<ResponseWrapper> response = new ResponseEntity<>(responseWrapper, HttpStatus.OK);
-        logger.info("Response {}", response);
-        return response;
-    }
-
+  
     
     /**
      * 
@@ -167,7 +128,7 @@ public class AtmController {
      * @param banks
      * @return
      */
-    public int[] subtractBankAmt(int[] balanceBanks, int[] banks){
+   public int[] updatedBankBalance(int[] balanceBanks, int[] banks){
         for (int i = 0; i < banks.length; i++){
             balanceBanks[i] -= banks[i];
         }
