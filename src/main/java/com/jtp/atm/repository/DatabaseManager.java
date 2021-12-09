@@ -20,7 +20,7 @@ public class DatabaseManager {
 
     private int[] bankValues;
 
-    public int[] getBankAmount(){
+    public int[] getBankNoteAmount(){
         List<Bank> banks = bankJdbcRepository.findAll();
         bankValues = new int[banks.size()];
 

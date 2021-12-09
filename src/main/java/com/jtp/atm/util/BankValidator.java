@@ -17,7 +17,7 @@ public class BankValidator {
 	 * @throws InvalidAmountException
 	 * @throws InsufficientBalanceException
 	 */
-    public static boolean validateAmount(Double amount, Double openingBal, Double overdraft) 
+    public static boolean validateInputAmount(Double amount, Double openingBal, Double overdraft) 
     		throws InvalidAmountException, InsufficientBalanceException {
         
     	Double totalRemaining = openingBal + overdraft;
@@ -37,7 +37,7 @@ public class BankValidator {
      * @return
      * @throws InsufficientBalanceException
      */
-    public static boolean validateRemainingBalance(Double amount, int[] bankAmount, int[] bankValues) throws InsufficientBalanceException {
+    public static boolean verifyBankBalance(Double amount, int[] bankAmount, int[] bankValues) throws InsufficientBalanceException {
         int totalAmt = 0;
         for(int i = 0; i < bankAmount.length; i++){
             totalAmt += bankValues[i]*bankAmount[i];
@@ -55,9 +55,10 @@ public class BankValidator {
      * @return
      * @throws InsufficientNoteException
      */
-    public static int[] validateRemainingNote(int[] bankLeft, List<int[]> totalBankNeeded) throws InsufficientNoteException {
-        for (int[] bankNeeded:totalBankNeeded) {
-            int[] resultBankSet = validateRemainingNote(bankLeft, bankNeeded);
+    public static int[] verifyRemainingBankNotes(int[] bankLeft, List<int[]> totalBankNeeded) throws InsufficientNoteException {
+       
+    	for (int[] bankNeeded:totalBankNeeded) {
+            int[] resultBankSet = verifyRemainingBankNotes(bankLeft, bankNeeded);
             if (resultBankSet != null) {
                 return resultBankSet;
             }
@@ -71,7 +72,7 @@ public class BankValidator {
      * @param bankNeeded
      * @return
      */
-    private static int[] validateRemainingNote(int[] bankLeft, int[] bankNeeded){
+    private static int[] verifyRemainingBankNotes(int[] bankLeft, int[] bankNeeded){
         for (int i = 0; i < bankLeft.length; i++) {
             if(bankLeft[i] < bankNeeded[i] && bankNeeded[i] > 0){
                 return null;
